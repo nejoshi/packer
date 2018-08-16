@@ -192,6 +192,13 @@ func funcGenVault(ctx *Context) interface{} {
 
 		data := secret.Data["data"]
 		if data == nil {
+			// maybe ths is v1, not v2 kv store
+			value := secret.Data[key]
+			if value != nil {
+				return value.(string), nil
+			}
+
+			// neither v1 nor v2 proudced a valid value
 			return "", errors.New(fmt.Sprintf("Vault data was empty at the "+
 				"given path. Warnings: %s", strings.Join(secret.Warnings, "; ")))
 		}
